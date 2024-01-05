@@ -7,10 +7,13 @@ import com.github.backend_1st_project.repository.UserRole.UserRoleEntity;
 import com.github.backend_1st_project.repository.UserRole.UserRoleJpaRepository;
 import com.github.backend_1st_project.repository.users.UsersEntity;
 import com.github.backend_1st_project.repository.users.UsersJpaRepository;
+import com.github.backend_1st_project.service.exception.InvalidValueException;
 import com.github.backend_1st_project.service.exception.NotAcceptException;
 import com.github.backend_1st_project.service.exception.NotFoundException;
 import com.github.backend_1st_project.web.dto.users.LoginDto;
 import com.github.backend_1st_project.web.dto.users.SignUpDTO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,13 +21,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 
     private final UsersJpaRepository usersJpaRepository;
@@ -69,4 +75,12 @@ public class UserService {
                 throw new NotAcceptException("로그인 할 수 없습니다.");
             }
         }
+
+    public void logout(String encryptedToken) {
+        if(jwtTokenProvider.validateToken(encryptedToken)){
+            jwtTokenProvider.nullifyToken(encryptedToken);
+        }
     }
+
+//
+}

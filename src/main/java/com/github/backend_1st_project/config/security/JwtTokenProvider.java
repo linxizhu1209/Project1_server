@@ -1,6 +1,7 @@
 package com.github.backend_1st_project.config.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,11 @@ public class JwtTokenProvider {
         } catch (Exception e){
             return false;
         }
+    }
+
+    public boolean nullifyToken(String jwtToken){
+        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken).getBody().setSubject("nullToken");
+        return true;
     }
 
     public Authentication getAuthentication(String jwtToken){
