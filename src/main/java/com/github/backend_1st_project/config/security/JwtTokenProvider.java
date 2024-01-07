@@ -1,5 +1,10 @@
 package com.github.backend_1st_project.config.security;
 
+import com.github.backend_1st_project.repository.Role.RoleJpaRepository;
+import com.github.backend_1st_project.repository.Role.RolesEntity;
+import com.github.backend_1st_project.repository.UserRole.UserRoleEntity;
+import com.github.backend_1st_project.repository.UserRole.UserRoleJpaRepository;
+import com.github.backend_1st_project.repository.users.UsersJpaRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
@@ -15,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +32,11 @@ public class JwtTokenProvider {
     private long tokenValidMillisecond = 1000L*60*60;
 
     private final UserDetailsService userDetailsService;
+    private final UsersJpaRepository usersJpaRepository;
+    private final RoleJpaRepository roleJpaRepository;
+    private final UserRoleJpaRepository userRoleJpaRepository;
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("X-AUTH-TOKEN");
+        return request.getHeader("Authorization");
     }
 
     public String createToken(String email, List<String> roles){

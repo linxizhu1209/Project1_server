@@ -1,5 +1,6 @@
 package com.github.backend_1st_project.repository.users;
 
+import com.github.backend_1st_project.repository.Time.TimeEntity;
 import com.github.backend_1st_project.repository.UserRole.UserRoleEntity;
 import lombok.*;
 
@@ -7,27 +8,31 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@Entity
 @AllArgsConstructor
-@Table(name="users")
+@NoArgsConstructor
 @Builder
-public class UsersEntity {
+@ToString
+@EqualsAndHashCode(of = "userEmail")
+@Entity
+@Table(name = "users")
+public class UsersEntity extends TimeEntity {
     @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id") @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
     @Column(name = "user_pwd")
     private String password;
-    @Column(name = "user_address")
+    @Column(name = "user_email", length = 30)
     private String email;
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private List<UserRoleEntity> userRoleList;
+
+    public UsersEntity(LocalDateTime createdAt, LocalDateTime updatedAt, Integer userId, String password, String email, List<UserRoleEntity> userRoleList) {
+        super(createdAt, updatedAt);
+        this.userId = userId;
+        this.password = password;
+        this.email = email;
+        this.userRoleList = userRoleList;
+    }
 }

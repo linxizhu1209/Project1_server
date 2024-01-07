@@ -28,7 +28,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/resources/static/**","/api/signup","/api/login").permitAll()
-                .antMatchers("/api/comments","/api/comments/*","/api/posts","/api/posts/*","/api/logout").hasRole("USER")
+                .antMatchers("/api/comments","/api/comments/*","/api/posts","/api/posts/*","/api/logout").hasAnyAuthority("admin","user")
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint())

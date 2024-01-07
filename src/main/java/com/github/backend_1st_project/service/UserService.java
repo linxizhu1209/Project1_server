@@ -10,11 +10,13 @@ import com.github.backend_1st_project.repository.users.UsersJpaRepository;
 import com.github.backend_1st_project.service.exception.InvalidValueException;
 import com.github.backend_1st_project.service.exception.NotAcceptException;
 import com.github.backend_1st_project.service.exception.NotFoundException;
+import com.github.backend_1st_project.service.mapper.UserMapper;
 import com.github.backend_1st_project.web.dto.users.LoginDto;
 import com.github.backend_1st_project.web.dto.users.SignUpDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -47,10 +50,10 @@ public class UserService {
             if(usersJpaRepository.existsByEmail(email)){
                 return false;
             }
-            RolesEntity role = roleJpaRepository.findByRoleName("ROLE_USER").orElseThrow(()->new NotFoundException("ROLE_USER를 찾을 수 없습니다."));
+            RolesEntity role = roleJpaRepository.findByRoleName("user").orElseThrow(()->new NotFoundException("사용자 권한을 찾을 수 없습니다."));
               UsersEntity user = UsersEntity.builder()
                     .email(email).password(passwordEncoder.encode(password))
-                    .createdAt(LocalDateTime.now()).build();
+                    .build();
 
             usersJpaRepository.save(user);
             userRoleJpaRepository.save(UserRoleEntity.builder().role(role).users(user).build());
@@ -76,11 +79,39 @@ public class UserService {
             }
         }
 
-    public void logout(String encryptedToken) {
+    public String logout(HttpServletRequest request) {
+        String encryptedToken = jwtTokenProvider.resolveToken(request);
+// 컨트롤러의 로직을 서비스로 이동
         if(jwtTokenProvider.validateToken(encryptedToken)){
             jwtTokenProvider.nullifyToken(encryptedToken);
         }
+        return "로그아웃이 성공적으로 완료 되었습니다!";
     }
+
+
+    public List<LoginDto> findByUser(String userEmail) {
+        List<UsersEntity> userEntity = usersJpaRepository.findByEmail(userEmail);
+        if(userEntity.isEmpty())
+            throw new NotFoundException("해당 ID: " + userEmail + "를 찾을 수 없습니다.");
+        List<LoginDto> userDto = userEntity.stream().map(UserMapper.INSTANCE::entityToDTO).collect(Collectors.toList());
+        return userDto;
+    }
+
+    public List<LoginDto> findAllUser() {
+        List<UsersEntity> userEntity = usersJpaRepository.findAll(Sort.by(Sort.Direction.DESC, "userId"));
+        List<LoginDto> userDto = userEntity.stream().map(UserMapper.INSTANCE::entityToDTO).collect(Collectors.toList());
+        return userDto;
+    }
+//
+//    public String saveUser(RequestUser userBody) {
+//        UsersEntity userEntity = usersJpaRepository.findByEmailEquals(userBody.getEmail());
+//        if(userEntity != null)
+//            throw new NotFoundException("해당 ID: " + userEntity.getEmail() + "는 이미 존재합니다.");
+//
+//        return "회원가입이 완료되었습니다.";
+//    }
+//
+
 
 //
 }
