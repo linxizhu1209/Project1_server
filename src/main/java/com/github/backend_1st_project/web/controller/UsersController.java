@@ -10,6 +10,7 @@ import com.github.backend_1st_project.web.dto.users.LoginDTO;
 import com.github.backend_1st_project.web.dto.users.SignupDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,6 @@ import java.util.List;
 public class UsersController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @ApiOperation("이메일 비밀번호 입력하여 회원 가입 API")
     @PostMapping("/signup")
@@ -37,7 +37,9 @@ public class UsersController {
     }
 
     @ApiOperation("이메일 비밀번호 입력하여 접속하는 api")
-    @PostMapping("/login")
+    @PostMapping(value = "/login", headers = {
+        "Content-type=application/json"
+    })
     public ResponseModel loginSuccess(@RequestBody LoginDTO loginDto, HttpServletResponse httpServletResponse){
         String token = userService.login(loginDto);
         httpServletResponse.setHeader("Authorization",token);
@@ -53,23 +55,4 @@ public class UsersController {
         String result = userService.logout(request);
         return new ResponseModel(result);
     }
-
-
-
-    @GetMapping("/users")
-    @ApiOperation(value="유저 정보 전체 조회", notes="유저 정보를 전체조회")
-    public ResultResponse findAllUser(){
-        List<LoginDTO> users = userService.findAllUser();
-        return new ResultResponse(users);
-    }
-
-    @GetMapping("/users/{userEmail}")
-    @ApiOperation(value="유저 정보 조회", notes="특정 유저 정보를 조회")
-    @ApiImplicitParam(name = "userEmail", value = "현재 등록된 유저 id")
-    public ResultResponse findByUserId(@PathVariable String userEmail){
-        List<LoginDTO> users = userService.findByUser(userEmail);
-        return new ResultResponse(users);
-    }
-
-
 }

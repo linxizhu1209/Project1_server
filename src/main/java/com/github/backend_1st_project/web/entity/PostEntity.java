@@ -2,9 +2,12 @@ package com.github.backend_1st_project.web.entity;
 
 import com.github.backend_1st_project.web.dto.posts.PostBody;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,6 +39,10 @@ public class PostEntity extends TimeEntity {
     @Column(name = "like_count", columnDefinition = "DEFAULT 0")
     private Integer likeCount;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<LikesEntity> LikesList;
+
+
     public PostEntity(String title, String content, UserEntity user, LocalDateTime createdAt, LocalDateTime updatedAt) {
         super(createdAt, updatedAt);
         this.title = title;
@@ -51,7 +58,15 @@ public class PostEntity extends TimeEntity {
         this.setUpdatedAt(LocalDateTime.now());
     }
 
+    public void setLikeCount(Integer likeCount) {
+        this.likeCount += likeCount;
+    }
+
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void decreaseLikeCount(){
+      this.likeCount--;
     }
 }
