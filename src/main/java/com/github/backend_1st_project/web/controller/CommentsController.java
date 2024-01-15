@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/comments")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name="Comments",description = "Comments API Document")
@@ -26,14 +26,14 @@ public class CommentsController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 조회",description = "특정 게시물의 댓글 조회")
-    @GetMapping("/{postId}/comments")
+    @GetMapping("/{postId}")
     public ResultResponse findByComment(@Parameter(description = "게시물 번호") Integer postId){
         List<CommentDTO> comments = commentService.findPostByComments(postId);
         return new ResultResponse(comments);
     }
 
     @Operation(summary = "댓글 남기기",description = "특정 게시물에 댓글 추가")
-    @PostMapping("/comments")
+    @PostMapping("")
     public ResponseModel registerComment(
             @RequestBody CommentBody body,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
@@ -43,14 +43,14 @@ public class CommentsController {
     }
 
     @Operation(summary = "댓글 수정",description = "특정 게시물의 댓글 수정")
-    @PutMapping("/comments/{commentId}")
+    @PutMapping("/{commentId}")
     public ResponseModel updateComment(@Parameter(description = "댓글 번호") Integer commentId, @RequestBody CommentBody body){
         String result = commentService.updateComment(commentId, body);
         return new ResponseModel(result);
     }
 
     @Operation(summary = "댓글 삭제",description = "특정 게시물의 댓글 삭제",tags = {"delete"})
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ResponseModel updateComment(@Parameter(description = "댓글 번호") Integer commentId){
         String result = commentService.deleteComment(commentId);
         return new ResponseModel(result);

@@ -6,7 +6,6 @@ import com.github.backend_1st_project.service.PostService;
 import com.github.backend_1st_project.web.dto.ResultResponse;
 import com.github.backend_1st_project.web.dto.posts.PostBody;
 import com.github.backend_1st_project.web.dto.posts.PostsDTO;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +51,7 @@ public class PostsController {
 
     @Operation(summary = "게시물 조회",description = "특정 사용자가 쓴 게시물 조회" )
     @GetMapping("/search")
-    public List<PostsDTO> findPostsById(@Parameter(description = "사용자 이메일") String userEmail) {
+    public List<PostsDTO> findPostsById(@Parameter(description = "사용자 이메일",example = "abc1@example.com") String userEmail) {
         List<PostsDTO> posts = postService.findPostById(userEmail);
         return posts;
     }

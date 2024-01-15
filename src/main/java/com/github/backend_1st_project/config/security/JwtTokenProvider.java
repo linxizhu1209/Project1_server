@@ -28,7 +28,6 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
-    // request Header에 따로 필드를 만들 수도 있지만, 기본적으로 request Header에서 Authorization이 존재
     public String resolveToken(HttpServletRequest request){
         return request.getHeader("Authorization");
     }
