@@ -10,11 +10,8 @@ import com.github.backend_1st_project.web.entity.RolesEntity;
 import com.github.backend_1st_project.web.entity.UserEntity;
 import com.github.backend_1st_project.repository.users.UsersJpaRepository;
 import com.github.backend_1st_project.service.exception.NotFoundException;
-import com.github.backend_1st_project.service.mapper.UserMapper;
-import com.github.backend_1st_project.web.dto.users.RequestUser;
 import com.github.backend_1st_project.web.entity.UserRoleEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
